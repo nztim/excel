@@ -1,0 +1,14 @@
+{
+    "name": "nztim/excel",
+    "description": "PHPSpreadsheet wrapper",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.1.0",
+        "phpoffice/phpspreadsheet": "^1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "NZTim\\Excel\\": "src/"
+        }
+    }
+}
