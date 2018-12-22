@@ -96,9 +96,9 @@ class ExcelSpreadsheet
                 }
                 $sheet->setCellValue($column . $row, strval($value));
                 // Handle dates
-                if ($this->dateTime($value)) {
+                if ($value instanceof Carbon) {
                     // Set value to Excel-specific timestamp
-                    $sheet->setCellValue($column . $row, $this->dateTime($value));
+                    $sheet->setCellValue($column . $row, Date::PHPToExcel($value));
                     // Set display mask to appropriate format
                     $sheet->getStyle($column . $row)
                         ->getNumberFormat()
@@ -108,18 +108,6 @@ class ExcelSpreadsheet
             }
             $column = 'A';
             $row++;
-        }
-    }
-
-    protected function dateTime($value): ?string
-    {
-        if ($value instanceof Carbon) {
-            return Date::PHPToExcel($value);
-        }
-        try {
-            return Date::PHPToExcel(new DateTime($value));
-        } catch (\Throwable $e) {
-            return null;
         }
     }
 }
