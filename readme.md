@@ -4,4 +4,4 @@
 
 ### Upgrading
 
-* Date values should be Carbon instances, otherwise they will be treated as strings
+* Cells should be strings, integer data type, or Carbon instances for dates.

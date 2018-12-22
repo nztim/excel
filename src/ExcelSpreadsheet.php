@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use DateTime;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -94,15 +95,17 @@ class ExcelSpreadsheet
                 if (is_array($value)) {
                     continue;
                 }
-                $sheet->setCellValue($column . $row, strval($value));
-                // Handle dates
-                if ($value instanceof Carbon) {
+                if (is_integer($value)) {
+                    $sheet->setCellValueExplicit($column . $row, $value, DataType::TYPE_NUMERIC);
+                } elseif ($value instanceof Carbon) {
                     // Set value to Excel-specific timestamp
                     $sheet->setCellValue($column . $row, Date::PHPToExcel($value));
                     // Set display mask to appropriate format
                     $sheet->getStyle($column . $row)
                         ->getNumberFormat()
                         ->setFormatCode('dd-mm-yyyy'); // See \PhpOffice\PhpSpreadsheet\Style\NumberFormat
+                } else {
+                    $sheet->setCellValueExplicit($column . $row, strval($value), DataType::TYPE_STRING);
                 }
                 $column++;
             }
