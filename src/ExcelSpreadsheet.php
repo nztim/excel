@@ -6,6 +6,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExcelSpreadsheet
 {
@@ -35,24 +36,32 @@ class ExcelSpreadsheet
         $this->addContent($sheet);
     }
 
+    /** Save the sheet to $file (full path and filename) */
     public function save(string $file)
     {
         $writer = IOFactory::createWriter($this->phpExcel, 'Xlsx');
         $writer->save($file);
     }
 
-    public function download($file, $filename = null)
+    /** Download the file as $filename */
+    // https://phpspreadsheet.readthedocs.io/en/develop/topics/recipes/#redirect-output-to-a-clients-web-browser
+    // https://medium.com/@barryvdh/streaming-large-csv-files-with-laravel-chunked-queries-4158e484a5a2
+    public function download($filename)
     {
-        $filename = $filename ?: pathinfo($file, PATHINFO_BASENAME);
-        $response = response()->download($file, $filename, $this->headers($filename));
-        ob_end_clean(); // https://github.com/laravel/framework/issues/2892
+        $response = new StreamedResponse(function () {
+            $writer = IOFactory::createWriter($this->phpExcel, 'Xlsx');
+            $writer->save('php://output');
+        });
+        $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $filename . '"');
+        $response->headers->set('Cache-Control','max-age=0');
         return $response;
     }
 
     protected function headers($filename)
     {
         return [
-            'Content-type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename=' . $filename,
         ];
     }
