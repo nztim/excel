@@ -1,7 +1,6 @@
 <?php namespace NZTim\Excel;
 
 use Carbon\Carbon;
-use DateTime;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -57,14 +56,6 @@ class ExcelSpreadsheet
         $response->headers->set('Content-Disposition', 'attachment;filename="' . $filename . '"');
         $response->headers->set('Cache-Control','max-age=0');
         return $response;
-    }
-
-    protected function headers($filename)
-    {
-        return [
-            'Content-type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename=' . $filename,
-        ];
     }
 
     protected function addHeadings(Worksheet $sheet)
