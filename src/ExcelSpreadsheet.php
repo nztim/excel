@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExcelSpreadsheet
 {
-    protected $title;
-    protected $data;
-    protected $creator;
-    protected $phpExcel;
+    private string $title;
+    private array $data;
+    private string $creator;
+    private Spreadsheet $phpExcel;
 
     public function __construct(string $title, array $data, string $creator = '')
     {
@@ -23,9 +23,9 @@ class ExcelSpreadsheet
         $this->create();
     }
 
-    protected function create()
+    protected function create(): void
     {
-        $this->phpExcel = new Spreadsheet;
+        $this->phpExcel = new Spreadsheet();
         $this->phpExcel->setActiveSheetIndex(0);
         $this->phpExcel->getProperties()
             ->setCreator($this->creator)
@@ -37,7 +37,7 @@ class ExcelSpreadsheet
     }
 
     /** Save the sheet to $file (full path and filename) */
-    public function save(string $file)
+    public function save(string $file): void
     {
         $writer = IOFactory::createWriter($this->phpExcel, 'Xlsx');
         $writer->save($file);
@@ -46,7 +46,7 @@ class ExcelSpreadsheet
     /** Download the file as $filename */
     // https://phpspreadsheet.readthedocs.io/en/develop/topics/recipes/#redirect-output-to-a-clients-web-browser
     // https://medium.com/@barryvdh/streaming-large-csv-files-with-laravel-chunked-queries-4158e484a5a2
-    public function download($filename)
+    public function download($filename): StreamedResponse
     {
         $response = new StreamedResponse(function () {
             $writer = IOFactory::createWriter($this->phpExcel, 'Xlsx');
@@ -58,7 +58,7 @@ class ExcelSpreadsheet
         return $response;
     }
 
-    protected function addHeadings(Worksheet $sheet)
+    private function addHeadings(Worksheet $sheet): void
     {
         // Get key for the first data element
         $firstKey = array_keys($this->data)[0];
@@ -76,7 +76,7 @@ class ExcelSpreadsheet
         }
     }
 
-    protected function addContent(Worksheet $sheet)
+    protected function addContent(Worksheet $sheet): void
     {
         $row = 2;
         $column = 'A';
