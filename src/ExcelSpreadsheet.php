@@ -86,7 +86,7 @@ class ExcelSpreadsheet
                 if (is_array($value)) {
                     continue;
                 }
-                if (is_integer($value)) {
+                if (is_integer($value) || is_float($value)) {
                     $sheet->setCellValueExplicit($column . $row, $value, DataType::TYPE_NUMERIC);
                 } elseif ($value instanceof Carbon) {
                     // Set value to Excel-specific timestamp
