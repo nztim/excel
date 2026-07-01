@@ -72,7 +72,7 @@ class ExcelSpreadsheet
                 continue;
             }
             $sheet->setCellValue($column . $row, strval($key));
-            $column++;
+            $column = str_increment($column);
         }
     }
 
@@ -98,7 +98,7 @@ class ExcelSpreadsheet
                 } else {
                     $sheet->setCellValueExplicit($column . $row, strval($value), DataType::TYPE_STRING);
                 }
-                $column++;
+                $column = str_increment($column);
             }
             $column = 'A';
             $row++;
